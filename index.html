@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link rel="stylesheet" href="css/cssreset.css">
+</head>
+<body>
+
+<div id="container">
+</div>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+
+	var BASEH = 180;
+	var $container = $('#container');
+		var $win = $(window);
+	var $body = $("body");
+
+	var winW = $win.width();
+	var hasScrollBar = false;
+
+	$body.scrollTop(10);
+	hasScrollBar = $body.scrollTop() > 0 ? true : false;
+	$body.scrollTop(0);
+
+	var $line;
+	var $lineArr = [];
+	for (var i = 0; i < 20; i++) {
+		if(i % 4 == 0) {
+			$line = $('<div></div>');
+			$lineArr.push($line);
+			$container.append($line);
+		}
+		var $img = $('<img>');
+		$img.attr('src', 'images/' + i + '.jpg');
+		$img.height(BASEH);
+		$line.append($img);
+	}
+
+	$win.resize(computer);
+	computer(true);
+
+	function computer(isFirst) {
+		$lineArr.forEach(function (n) {
+			var $n = $(n);
+			var $imgs = $n.find('img');
+			if(isFirst != true) {
+				countImages($imgs);
+				return;
+			}
+			$imgs.load(function () {
+				if($imgs.loadLen == undefined) {
+					$imgs.loadLen = 0;
+				} else {
+					$imgs.loadLen++;
+				}
+				if($imgs.loadLen == 3) {
+					countImages($imgs);
+				}
+			});
+		});
+	}
+
+	function countImages($imgs) {
+		var lineW = computedLineW($imgs);
+		var wW = hasScrollBar ? $win.width() - 18 : $win.width();
+		var bili = lineW / wW;
+		$imgs.height(Math.floor(BASEH / bili) + 'px');
+		$imgs.eq(0).height($imgs.eq(0).height - 1);
+	}
+
+	function computedLineW($imgs) {
+		var w = 0;
+		$imgs.height(BASEH).each(function (ii, nn) {
+			var $nn = $(nn);
+			w += $nn.width();
+		});
+		return w;
+	}
+</script>
+</body>
+</html>
